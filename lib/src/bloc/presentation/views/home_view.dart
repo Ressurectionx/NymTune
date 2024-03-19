@@ -49,7 +49,7 @@ class HomeView extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(
-                            height: 8,
+                            height: 10,
                           ),
                           TopPicks(),
                           const SizedBox(

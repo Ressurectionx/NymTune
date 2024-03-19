@@ -78,6 +78,7 @@ class _TrendingNowState extends State<TrendingNow> {
       child: ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
         itemCount: _songs.length,
+        padding: EdgeInsets.zero,
         itemBuilder: (context, index) {
           final song = _songs[index];
           final isLast =
