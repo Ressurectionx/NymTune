@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import '../models/song_model.dart';
 import '../repositories/fetch_song_repo.dart';
 
-class SongRemoteRepository implements SongRepository {
+class SongRemoteUsecase implements SongRepository {
   final String apiUrl = 'https://your-api-url.com/songs'; // Example API URL
 
   @override
