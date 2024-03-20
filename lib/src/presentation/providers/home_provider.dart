@@ -34,35 +34,36 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-  // Fetch audio data for a song
-  // Fetch audio data for a song and save it to a file
-  Future<String> fetchAndSaveAudio(String songUrl) async {
+  Future<String> fetchAndSaveAudio(String songUrl, String songId) async {
+    String filePath = '${(await getTemporaryDirectory()).path}/$songId.mp3';
+    File file = File(filePath);
+
+    // Check if the file already exists. If it does, return the path immediately.
+    if (await file.exists()) {
+      return filePath;
+    }
+
     try {
-      // Get the download URL for the storage location
       String downloadUrl = await getDownloadUrl(songUrl);
+      final request = await HttpClient().getUrl(Uri.parse(downloadUrl));
+      final response = await request.close();
 
-      // Fetch audio data using the download URL
-      final http.Response response =
-          await _httpClient.get(Uri.parse(downloadUrl));
-
-      if (response.statusCode == 200) {
-        // Save audio data to a temporary file
-        final tempDir = await getTemporaryDirectory();
-        final tempFile = File('${tempDir.path}/audio_temp.mp3');
-        await tempFile.writeAsBytes(response.bodyBytes);
-        return tempFile.path;
-      } else {
-        throw Exception('Failed to fetch audio data: ${response.statusCode}');
-      }
+      // Save the streamed audio into file in chunks.
+      await response.pipe(file.openWrite());
+      notifyListeners();
+      return filePath;
     } catch (e) {
-      throw Exception('Error fetching and saving audio: $e');
+      throw Exception('Error fetching and saving audio stream: $e');
     }
   }
 
-  // Function to get the downloadable URL from the storage location
+// Function to get the downloadable URL from the storage location
   Future<String> getDownloadUrl(String storageLocation) async {
     try {
+      // Create a Reference from the storage location
       Reference ref = FirebaseStorage.instance.refFromURL(storageLocation);
+
+      // Get the download URL
       return await ref.getDownloadURL();
     } catch (e) {
       throw Exception('Error getting download URL: $e');

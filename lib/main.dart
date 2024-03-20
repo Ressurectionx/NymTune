@@ -12,6 +12,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // // SafetyNet for Android
+  // if (defaultTargetPlatform == TargetPlatform.android) {
+  //   await FirebaseAppCheck.instance.activate();
+  // }
   runApp(const NymTune());
 }
 
