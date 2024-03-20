@@ -31,14 +31,36 @@ class _DetailsViewState extends State<DetailsView> {
   bool _fetchErrorOccurred =
       false; // New variable to track if an error occurred
   Song? song;
+  Duration? _duration;
+  Duration? _position;
   @override
   void initState() {
     super.initState();
-    _audioStreamController = StreamController<Uint8List>.broadcast();
     _isPlaying = false;
     _audioPlayer = AudioPlayer();
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       _initAudioFetching();
+    });
+
+    _audioPlayer.onDurationChanged.listen((Duration d) {
+      // Duration of the audio file
+      setState(() {
+        _duration = d;
+      });
+    });
+
+    _audioPlayer.onPositionChanged.listen((Duration p) {
+      // Current position of the audio file
+      setState(() {
+        _position = p;
+      });
+    });
+
+    _audioPlayer.onPlayerComplete.listen((event) {
+      setState(() {
+        _isPlaying = false;
+        _position = _duration;
+      });
     });
   }
 
@@ -51,27 +73,52 @@ class _DetailsViewState extends State<DetailsView> {
   }
 
   String songId = '';
+
   Future<void> _initAudioFetching() async {
     if (!_hasFetchedAudio && !_isFetchingAudio) {
       _isFetchingAudio = true; // Indicate that fetching is in progress
       final HomeProvider provider =
           Provider.of<HomeProvider>(context, listen: false);
-      final Song song = provider.songs[widget.index];
-      songId = song.title; // Assuming each song has a unique title attribute
+      song = provider.songs[widget.index];
+      songId = song!.title; // Assuming each song has a unique title attribute
 
       try {
-        _audioFilePath = await provider.fetchAndSaveAudio(song.songUrl, songId);
+        _audioFilePath =
+            await provider.fetchAndSaveAudio(song!.songUrl, songId);
         _hasFetchedAudio = true;
         _isFetchingAudio = false;
         _fetchErrorOccurred = false; // Reset error state if any
-        setState(() {});
+
+        // Check if the widget is still mounted before calling setState
+        if (mounted) {
+          setState(() {
+            // Start playback immediately after fetching audio successfully
+            _audioPlayer.play(UrlSource(_audioFilePath));
+            _isPlaying = true;
+          });
+        }
       } catch (e) {
         _isFetchingAudio = false;
         _fetchErrorOccurred = true; // Set error state
         print('Error fetching and saving audio: $e');
-        setState(() {}); // Update UI to show error message
+        if (mounted) {
+          setState(() {}); // Update UI to show error message
+        }
       }
     }
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final hours = twoDigits(duration.inHours);
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+
+    return [
+      if (duration.inHours > 0) hours,
+      minutes,
+      seconds,
+    ].join(':');
   }
 
   void _togglePlayPause() {
@@ -159,45 +206,49 @@ class _DetailsViewState extends State<DetailsView> {
           ],
         ),
         const Spacer(),
-        // Audio player widget
-        StreamBuilder<Uint8List>(
-          stream: _audioStreamController.stream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return InkWell(
-                onTap: _togglePlayPause,
-                child: Icon(
-                  _isPlaying ? Icons.pause : Icons.play_arrow,
-                  size: 48,
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              return const CircularProgressIndicator();
-            }
-          },
-        ),
         Text(
-          'Take you home',
+          song!.title,
           style: AppTextStyles.header.copyWith(fontFamily: "Michroma"),
         ),
         const SizedBox(height: 10),
-        Text('Kang',
+        Text(song!.artist,
             style: AppTextStyles.subHeader.copyWith(
                 fontFamily: "OldTurkic",
                 letterSpacing: 1.2,
                 color: Colors.grey)),
         const SizedBox(height: 35),
-        Container(
-          width: 300,
-          height: 100,
-          // Replace with your music waves widget
-          decoration: BoxDecoration(
-            color: Colors.grey,
-            borderRadius: BorderRadius.circular(10),
+        SliderTheme(
+          data: const SliderThemeData(
+            trackHeight: 3,
+            thumbShape: RoundSliderThumbShape(enabledThumbRadius: 5),
+            overlayShape: RoundSliderOverlayShape(overlayRadius: 10),
+          ),
+          child: Slider(
+            value: _position?.inSeconds.toDouble() ?? 0,
+            min: 0,
+            max: _duration?.inSeconds.toDouble() ?? 1,
+            onChanged: (value) {
+              setState(() {
+                _audioPlayer.seek(Duration(seconds: value.toInt()));
+              });
+            },
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(_formatDuration(_position ?? Duration.zero),
+                  style: AppTextStyles.subHeader
+                      .copyWith(color: AppColors.dark3(), fontSize: 12)),
+              Text(_formatDuration(_duration ?? Duration.zero),
+                  style: AppTextStyles.subHeader
+                      .copyWith(color: AppColors.dark3(), fontSize: 12)),
+            ],
+          ),
+        ),
+        const SizedBox(height: 30),
         const SizedBox(height: 30),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
