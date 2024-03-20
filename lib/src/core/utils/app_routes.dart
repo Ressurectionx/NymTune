@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:nymtune/src/bloc/presentation/views/dashboard.dart';
-import 'package:nymtune/src/bloc/presentation/views/details_view.dart';
-import 'package:nymtune/src/bloc/presentation/views/home_view.dart';
-import 'package:nymtune/src/bloc/presentation/views/setting.dart';
+import 'package:nymtune/src/presentation/presentation/views/dashboard.dart';
+import 'package:nymtune/src/presentation/presentation/views/details_view.dart';
+import 'package:nymtune/src/presentation/presentation/views/home_view.dart';
+import 'package:nymtune/src/presentation/presentation/views/setting.dart';
 
 class AppRoutes {
   // Define your named routes here

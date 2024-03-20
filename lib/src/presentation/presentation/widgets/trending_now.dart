@@ -35,31 +35,31 @@ class _TrendingNowState extends State<TrendingNow> {
         "id": 1,
         "title": "Bohemian Rhapsody",
         "artist": "Queen",
-        "imageUrl": imgUrl
+        "image_url": imgUrl
       },
       {
         "id": 2,
         "title": "Hotel California",
         "artist": "Eagles",
-        "imageUrl": imgUrl1
+        "image_url": imgUrl1
       },
       {
         "id": 3,
         "title": "Stairway to Heaven",
         "artist": "Led Zeppelin",
-        "imageUrl": imgUrl2
+        "image_url": imgUrl2
       },
       {
         "id": 4,
         "title": "Hey Jude",
         "artist": "The Beatles",
-        "imageUrl": imgUrl3
+        "image_url": imgUrl3
       },
       {
         "id": 5,
         "title": "Imagine",
         "artist": "John Lennon",
-        "imageUrl": imgUrl4
+        "image_url": imgUrl4
       }
     ];
 

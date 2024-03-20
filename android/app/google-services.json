@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "25142023601",
+    "project_id": "nymtune",
+    "storage_bucket": "nymtune.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:25142023601:android:8bdf9d15b52ec0f3d85990",
+        "android_client_info": {
+          "package_name": "com.example.nymtune"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWccvE3sDbgcSrEqbRauqqvG_ouu2uHIE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

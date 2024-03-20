@@ -6,7 +6,6 @@ import 'package:nymtune/src/core/theme/app_text_styles.dart';
 
 class DetailsView extends StatelessWidget {
   const DetailsView({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
