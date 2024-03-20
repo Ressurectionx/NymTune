@@ -1,92 +1,36 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nymtune/src/core/theme/app_colors.dart';
-import 'package:nymtune/src/core/theme/app_text_styles.dart';
+import 'package:nymtune/src/presentation/providers/home_provider.dart';
+import 'package:provider/provider.dart';
 import '../../data/models/song_model.dart';
 
-class TrendingNow extends StatefulWidget {
-  @override
-  _TrendingNowState createState() => _TrendingNowState();
-}
-
-class _TrendingNowState extends State<TrendingNow> {
-  final List<Song> _songs = []; // List to hold songs
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSongs();
-  }
-
-  Future<void> _loadSongs() async {
-    String imgUrl =
-        "https://images-platform.99static.com/bi6KeQq1GTyLD_yseZT3QsR1Brc=/0x0:2000x2000/500x500/top/smart/99designs-contests-attachments/127/127640/attachment_127640646";
-    String imgUrl1 =
-        "https://www.billboard.com/wp-content/uploads/2024/02/02-beyonce-press-2024-cr-Mason-Poole-billboard-1548.jpg?w=942&h=623&crop=1";
-    String imgUrl2 =
-        "https://i.ebayimg.com/images/g/jUEAAOSwSvVlbbm3/s-l1200.webp";
-    String imgUrl3 =
-        "https://i0.wp.com/fabukmagazine.com/wp-content/uploads/2023/09/PAUL-RUSSELL-RELEASES-HIGH-ENERGY-MUSIC-VIDEO-FOR-BUZZING-SINGLE-LIL-BOO-THANG-TODAY.jpg?resize=768%2C768&ssl=1";
-    String imgUrl4 =
-        "https://i.ytimg.com/vi/k6HIl6ZY5ro/hq720.jpg?sqp=-oaymwEXCK4FEIIDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLD0UGW_dtJfLxElR6WZOw4TJGb6ZQ";
-
-    var json = [
-      {
-        "id": 1,
-        "title": "Bohemian Rhapsody",
-        "artist": "Queen",
-        "image_url": imgUrl
-      },
-      {
-        "id": 2,
-        "title": "Hotel California",
-        "artist": "Eagles",
-        "image_url": imgUrl1
-      },
-      {
-        "id": 3,
-        "title": "Stairway to Heaven",
-        "artist": "Led Zeppelin",
-        "image_url": imgUrl2
-      },
-      {
-        "id": 4,
-        "title": "Hey Jude",
-        "artist": "The Beatles",
-        "image_url": imgUrl3
-      },
-      {
-        "id": 5,
-        "title": "Imagine",
-        "artist": "John Lennon",
-        "image_url": imgUrl4
-      }
-    ];
-
-    // Parse JSON data and add to the list of songs
-    List<Song> songs = json.map((json) => Song.fromJson(json)).toList();
-
-    setState(() {
-      _songs.addAll(songs);
-    });
-  }
-
+class TrendingNow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: (_songs.length * 120) + 150,
-      child: ListView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: _songs.length,
-        padding: EdgeInsets.zero,
-        itemBuilder: (context, index) {
-          final song = _songs[index];
-          final isLast =
-              index == _songs.length - 1; // Checking if it's the last item
+    return Consumer<HomeProvider>(
+      builder: (context, provider, _) {
+        if (provider.isLoading) {
+          return const CircularProgressIndicator(); // Show loading indicator
+        } else if (provider.hasError) {
+          return Text(provider.errorMessage); // Show error message
+        } else {
+          return SizedBox(
+            height: (provider.songs.length * 120) + 150,
+            child: ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: provider.songs.length,
+              padding: EdgeInsets.zero,
+              itemBuilder: (context, index) {
+                final song = provider.songs[index];
+                final isLast = index == provider.songs.length - 1;
 
-          return TrendingSongItem(song: song, isLast: isLast);
-        },
-      ),
+                return TrendingSongItem(song: song, isLast: isLast);
+              },
+            ),
+          );
+        }
+      },
     );
   }
 }
@@ -147,9 +91,9 @@ class TrendingSongImage extends StatelessWidget {
   final String imageUrl;
 
   const TrendingSongImage({
-    Key? key,
+    super.key,
     required this.imageUrl,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

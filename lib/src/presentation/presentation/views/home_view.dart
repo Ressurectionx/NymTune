@@ -29,7 +29,7 @@ class _HomeViewState extends State<HomeView> {
         slivers: <Widget>[
           const SliverAppBar(
             backgroundColor: Colors.black,
-            title: Text("Your App Title"), // Replace with your app title
+            title: HWHeader(), // Replace with your app title
             floating: true,
             snap: false,
           ),
@@ -42,7 +42,7 @@ class _HomeViewState extends State<HomeView> {
                     if (provider.isLoading) {
                       // Display loading indicator while fetching songs
                       return const Center(
-                        child: const CircularProgressIndicator(),
+                        child: CircularProgressIndicator(),
                       );
                     } else if (provider.hasError) {
                       // Display error message if fetching songs failed

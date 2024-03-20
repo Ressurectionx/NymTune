@@ -4,6 +4,7 @@ class Song {
   final String duration;
   final String audioUrl;
   final String imageUrl;
+  final String songUrl;
 
   Song({
     required this.title,
@@ -11,6 +12,7 @@ class Song {
     required this.duration,
     required this.audioUrl,
     required this.imageUrl,
+    required this.songUrl,
   });
 
   factory Song.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class Song {
       duration: json['duration'] ?? '',
       audioUrl: json['audio_url'] ?? '',
       imageUrl: json['image_url'] ?? '',
+      songUrl: json['audio_url'] ?? '',
     );
   }
 }

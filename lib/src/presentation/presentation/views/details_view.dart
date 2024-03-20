@@ -1,11 +1,77 @@
+import 'dart:async';
+import 'dart:typed_data';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:nymtune/src/core/theme/app_colors.dart';
 import 'package:nymtune/src/core/theme/app_text_styles.dart';
+import 'package:nymtune/src/presentation/providers/home_provider.dart';
+import 'package:provider/provider.dart';
 
-class DetailsView extends StatelessWidget {
-  const DetailsView({super.key});
+import '../../data/models/song_model.dart';
+
+class DetailsView extends StatefulWidget {
+  final int index;
+
+  const DetailsView({Key? key, required this.index}) : super(key: key);
+
+  @override
+  _DetailsViewState createState() => _DetailsViewState();
+}
+
+class _DetailsViewState extends State<DetailsView> {
+  late StreamController<Uint8List> _audioStreamController;
+  late bool _isPlaying;
+  late String _audioFilePath;
+  late AudioPlayer _audioPlayer;
+
+  @override
+  void initState() {
+    super.initState();
+    _audioStreamController = StreamController<Uint8List>();
+    _isPlaying = false;
+    _audioPlayer = AudioPlayer();
+    _loadAudio();
+  }
+
+  @override
+  void dispose() {
+    _audioStreamController.close();
+    _audioPlayer.dispose();
+    // Clear temporary audio file
+    Provider.of<HomeProvider>(context, listen: false)
+        .clearTempAudio(_audioFilePath);
+    super.dispose();
+  }
+
+  Future<void> _loadAudio() async {
+    try {
+      final HomeProvider provider =
+          Provider.of<HomeProvider>(context, listen: false);
+      final Song song = provider.songs[widget.index];
+      // Fetch audio data and save it to a temporary file
+      _audioFilePath = await provider.fetchAndSaveAudio(song.songUrl);
+      // Play audio from the temporary file
+      await _audioPlayer.play(AssetSource(_audioFilePath));
+      setState(() {});
+    } catch (e) {
+      print('Error loading audio: $e');
+    }
+  }
+
+  void _togglePlayPause() {
+    if (_isPlaying) {
+      _audioPlayer.pause();
+    } else {
+      _audioPlayer.resume();
+    }
+    setState(() {
+      _isPlaying = !_isPlaying;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,48 +84,38 @@ class DetailsView extends StatelessWidget {
           radius: 24,
           backgroundColor: AppColors.dark2(),
           child: const Center(
-              child: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.grey,
-            size: 20,
-          )),
+            child: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Colors.grey,
+              size: 20,
+            ),
+          ),
         ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Stack(
-            children: [
-              // Your image
-              Hero(
-                tag: "song_image_details",
-                child: Image.network(
-                  "https://images-platform.99static.com/bi6KeQq1GTyLD_yseZT3QsR1Brc=/0x0:2000x2000/500x500/top/smart/99designs-contests-attachments/127/127640/attachment_127640646",
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width * 1.2,
-                  fit: BoxFit.fill,
-                ),
-              ),
-              // Linear gradient to fade the bottom of the image
-              const Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black, // Fade starts at 80% opacity
-                      ],
-                      stops: [0.8, 1.0], // Stop points for the gradient
-                    ),
+          // Audio player widget
+          StreamBuilder<Uint8List>(
+            stream: _audioStreamController.stream,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return InkWell(
+                  onTap: _togglePlayPause,
+                  child: Icon(
+                    _isPlaying ? Icons.pause : Icons.play_arrow,
+                    size: 48,
                   ),
-                ),
-              ),
-            ],
+                );
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return CircularProgressIndicator();
+              }
+            },
           ),
-          const Spacer(),
+          // Your other UI components
           Text(
             'Take you home',
             style: AppTextStyles.header.copyWith(fontFamily: "Michroma"),
@@ -93,7 +149,7 @@ class DetailsView extends StatelessWidget {
                   end: Alignment.bottomRight,
                   colors: [
                     Colors.white.withOpacity(0.2),
-                    Colors.white.withOpacity(0.1)
+                    Colors.white.withOpacity(0.1),
                   ],
                 ),
                 border: 2,
@@ -103,17 +159,18 @@ class DetailsView extends StatelessWidget {
                   end: Alignment.bottomRight,
                   colors: [
                     AppColors.greenYellow().withOpacity(0.5),
-                    AppColors.greenYellow().withOpacity(0.2)
+                    AppColors.greenYellow().withOpacity(0.2),
                   ],
                 ),
                 child: Center(
-                  child: Icon(CupertinoIcons.backward_end_fill,
-                      size: 24, color: AppColors.greenYellow()),
+                  child: Icon(
+                    CupertinoIcons.backward_end_fill,
+                    size: 24,
+                    color: AppColors.greenYellow(),
+                  ),
                 ),
               ),
-
-              const SizedBox(
-                  width: 25), // Adjust the spacing between icons as needed
+              const SizedBox(width: 25),
               GlassmorphicContainer(
                 width: 90,
                 height: 90,
@@ -123,7 +180,7 @@ class DetailsView extends StatelessWidget {
                   end: Alignment.bottomRight,
                   colors: [
                     AppColors.greenYellow().withOpacity(0.9),
-                    AppColors.greenYellow().withOpacity(0.6)
+                    AppColors.greenYellow().withOpacity(0.6),
                   ],
                 ),
                 border: 2,
@@ -137,8 +194,11 @@ class DetailsView extends StatelessWidget {
                   ],
                 ),
                 child: Center(
-                  child: Icon(CupertinoIcons.pause_fill,
-                      size: 30, color: AppColors.dark2()),
+                  child: Icon(
+                    CupertinoIcons.pause_fill,
+                    size: 30,
+                    color: AppColors.dark2(),
+                  ),
                 ),
               ),
               const SizedBox(width: 25),
@@ -151,7 +211,7 @@ class DetailsView extends StatelessWidget {
                   end: Alignment.bottomRight,
                   colors: [
                     Colors.white.withOpacity(0.2),
-                    Colors.white.withOpacity(0.1)
+                    Colors.white.withOpacity(0.1),
                   ],
                 ),
                 border: 2,
@@ -161,12 +221,15 @@ class DetailsView extends StatelessWidget {
                   end: Alignment.bottomRight,
                   colors: [
                     AppColors.greenYellow().withOpacity(0.5),
-                    AppColors.greenYellow().withOpacity(0.2)
+                    AppColors.greenYellow().withOpacity(0.2),
                   ],
                 ),
                 child: Center(
-                  child: Icon(CupertinoIcons.forward_end_fill,
-                      size: 24, color: AppColors.greenYellow()),
+                  child: Icon(
+                    CupertinoIcons.forward_end_fill,
+                    size: 24,
+                    color: AppColors.greenYellow(),
+                  ),
                 ),
               ),
             ],
