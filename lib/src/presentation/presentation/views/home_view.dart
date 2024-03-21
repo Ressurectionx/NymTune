@@ -19,7 +19,7 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     // Call fetchSongs() in initState to ensure it's called only once
-    Provider.of<HomeProvider>(context, listen: false).fetchSongs();
+    Provider.of<SongProvider>(context, listen: false).fetchSongs();
   }
 
   @override
@@ -37,7 +37,7 @@ class _HomeViewState extends State<HomeView> {
             delegate: SliverChildListDelegate(
               [
                 // Your widget content here
-                Consumer<HomeProvider>(
+                Consumer<SongProvider>(
                   builder: (context, provider, child) {
                     if (provider.isLoading) {
                       // Display loading indicator while fetching songs

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:nymtune/firebase_options.dart';
 import 'package:nymtune/src/core/utils/app_routes.dart';
 import 'package:nymtune/src/presentation/data/usecases/fetch_song_usecase.dart';
+import 'package:nymtune/src/presentation/providers/dashboard_provider.dart';
 import 'package:nymtune/src/presentation/providers/home_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -26,9 +27,12 @@ class NymTune extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<HomeProvider>(
+        ChangeNotifierProvider<SongProvider>(
           create: (context) =>
-              HomeProvider(songRemoteUsecase: SongRemoteUsecase()),
+              SongProvider(songRemoteUsecase: SongRemoteUsecase()),
+        ),
+        ChangeNotifierProvider<DashboardProvider>(
+          create: (context) => DashboardProvider(),
         ),
       ],
       child: MaterialApp(

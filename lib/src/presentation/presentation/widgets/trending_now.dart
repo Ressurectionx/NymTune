@@ -8,7 +8,7 @@ import '../../data/models/song_model.dart';
 class TrendingNow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeProvider>(
+    return Consumer<SongProvider>(
       builder: (context, provider, _) {
         if (provider.isLoading) {
           return const CircularProgressIndicator(); // Show loading indicator
