@@ -4,10 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
+import 'package:nymtune/src/core/utils/app_routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../core/theme/app_colors.dart';
-import '../presentation/views/dashboard.dart';
 
 class SignUpProvider extends ChangeNotifier {
   // Adjusting TextEditingControllers to match the screen requirements
@@ -27,6 +25,7 @@ class SignUpProvider extends ChangeNotifier {
   bool isSignupPage = true;
   bool isLoading = false;
   bool agreedToTerms = false;
+  String userName = "";
   String? validateFirstName(String? value) {
     if (value?.isEmpty ?? true) {
       return 'Please enter your first name.';
@@ -118,7 +117,8 @@ class SignUpProvider extends ChangeNotifier {
 
       isSignupPage = !isSignupPage;
       notifyListeners();
-      // Navigate to the next screen or show success message
+      // Navigate to the next screen
+      navigateToDashboard(context);
     } catch (e) {
       _handleError(context, e);
     } finally {
@@ -138,19 +138,25 @@ class SignUpProvider extends ChangeNotifier {
         password: passwordTextController.text.trim(),
       );
       String uid = userCredential.user!.uid;
-      String firstName = await fetchFirstName(uid);
+      userName = await fetchFirstName(uid);
 
       final preferences = await SharedPreferences.getInstance();
       await preferences.setString('userId', uid);
-      await preferences.setString('firstName', firstName);
-
-      // Navigate to the next screen or show success message
+      await preferences.setString('firstName', userName);
+      navigateToDashboard(context);
     } catch (e) {
       _handleError(context, e);
     } finally {
       isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<String?> getUserNameFromSharedPref() async {
+    final preferences = await SharedPreferences.getInstance();
+    userName = preferences.getString('firstName')!;
+    notifyListeners();
+    return userName;
   }
 
   Future<String> fetchFirstName(String uid) async {
@@ -225,5 +231,11 @@ class SignUpProvider extends ChangeNotifier {
         duration: const Duration(seconds: 3),
       ),
     );
+  }
+
+  void navigateToDashboard(BuildContext context) {
+    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.dashboard, (d) {
+      return false;
+    });
   }
 }

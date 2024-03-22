@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:nymtune/src/core/theme/app_colors.dart';
 import 'package:nymtune/src/presentation/presentation/widgets/trending_now.dart';
+import 'package:nymtune/src/presentation/providers/favourite_provider.dart';
 import 'package:nymtune/src/presentation/providers/song_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -22,13 +23,15 @@ class _HomeViewState extends State<HomeView> {
   final ScrollController _scrollController = ScrollController();
   final ScrollController _horizontalScrollController = ScrollController();
   SongProvider? provider;
-
+  FavoriteProvider? favProvider;
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onVerticalScroll);
     _horizontalScrollController.addListener(_onHorizontalScroll);
     provider = Provider.of<SongProvider>(context, listen: false);
+    favProvider = Provider.of<FavoriteProvider>(context, listen: false);
+    favProvider!.getFavoriteSongs();
     provider?.fetchSongs();
   }
 

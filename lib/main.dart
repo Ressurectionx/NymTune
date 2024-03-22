@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:nymtune/firebase_options.dart';
@@ -26,6 +27,8 @@ class NymTune extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final User? currentUser = FirebaseAuth.instance.currentUser;
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<SongProvider>(
@@ -47,7 +50,8 @@ class NymTune extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        initialRoute: AppRoutes.signUp,
+        initialRoute:
+            currentUser == null ? AppRoutes.signUp : AppRoutes.dashboard,
         routes: AppRoutes.routes,
         theme: ThemeData(
           brightness: Brightness.dark,

@@ -6,7 +6,7 @@ import 'package:nymtune/src/presentation/presentation/views/signup_view.dart';
 
 class AppRoutes {
   // Define your named routes here
-  static const String dashboardRoute = '/';
+  static const String dashboard = '/';
   static const String signUp = '/signup';
 
   static const String homeRoute = '/home';
@@ -14,7 +14,7 @@ class AppRoutes {
   static const String profileRoute = '/profile';
 
   static Map<String, WidgetBuilder> get routes => {
-        dashboardRoute: (context) => const DashboardView(),
+        dashboard: (context) => const DashboardView(),
 
         signUp: (context) => const SignUpView(),
 
