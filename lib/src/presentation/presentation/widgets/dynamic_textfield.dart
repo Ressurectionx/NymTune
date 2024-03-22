@@ -60,11 +60,9 @@ InputDecoration textDecorationTheme() {
     filled: true,
 
     fillColor: AppColors.dark3(),
-    errorStyle: const TextStyle(
-      color: Colors.redAccent,
-      fontSize: 10,
-      fontWeight: FontWeight.w400,
-    ),
+    errorStyle: AppTextStyles.description
+        .copyWith(color: Colors.red, fontSize: 10, fontWeight: FontWeight.w500),
+
     alignLabelWithHint: true,
     // isDense: true,
   );

@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:glassmorphism/glassmorphism.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -173,10 +174,55 @@ class SignUpProvider extends ChangeNotifier {
     if (e is FirebaseAuthException) {
       errorMessage = e.message ?? errorMessage;
     }
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(errorMessage),
-        backgroundColor: Colors.red,
+        padding: const EdgeInsets.all(0),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.transparent,
+        margin: const EdgeInsets.all(10),
+        content: GlassmorphicContainer(
+          width: double.infinity,
+          alignment: Alignment.center,
+          height: 65,
+          borderRadius: 12.0,
+          linearGradient: LinearGradient(colors: [
+            Colors.red.withOpacity(0.2),
+            Colors.red.withOpacity(0.3),
+          ]
+              // Adjust colors and positions as desired
+              ),
+          border: 2,
+          blur: 20,
+          borderGradient: LinearGradient(colors: [
+            Colors.grey.withOpacity(0.2),
+            Colors.grey.withOpacity(0.3),
+          ]
+              // Adjust colors and positions as desired
+              ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(
+                width: 16,
+              ),
+              Flexible(
+                child: Text(
+                  errorMessage,
+                  maxLines: 2,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.error_outline, color: Colors.white),
+                onPressed: () =>
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+              ),
+            ],
+          ),
+        ),
+        // Removed backgroundColor
+        duration: const Duration(seconds: 3),
       ),
     );
   }

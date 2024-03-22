@@ -161,13 +161,11 @@ class _SignUpViewState extends State<SignUpView> {
                           PrimaryButton(
                             isLoading: provider.isLoading,
                             onTap: () {
-                              // Trigger form validation
                               if (_formKey.currentState!.validate() &&
                                   provider.agreedToTerms) {
                                 return provider
                                     .signUpWithEmailAndPassword(context);
                               }
-                              // If the form is not valid, do not proceed and let the user correct the errors
                               return Future.value();
                             },
                             text: "Sign Up",
