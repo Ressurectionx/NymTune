@@ -66,16 +66,18 @@ class SongProvider extends ChangeNotifier {
   bool get hasFetchedAudio => _hasFetchedAudio;
   bool get isFetchingAudio => _isFetchingAudio;
 
-  Future<void> fetchSongs() async {
+  Future<List<Song>> fetchSongs() async {
     try {
       _songs = await songRemoteUsecase.fetchSongs();
       _isLoading = false;
       notifyListeners();
+      return _songs;
     } catch (e) {
       _hasError = true;
       _errorMessage = e.toString();
       notifyListeners();
       print('Failed to fetch songs: $e');
+      throw e; // Rethrow the error so it can be caught by the caller if needed
     }
   }
 

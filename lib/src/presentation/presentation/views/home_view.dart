@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:nymtune/src/presentation/presentation/widgets/trending_now.dart';
 import 'package:nymtune/src/presentation/providers/home_provider.dart';
 import 'package:provider/provider.dart';
@@ -41,8 +42,27 @@ class _HomeViewState extends State<HomeView> {
                   builder: (context, provider, child) {
                     if (provider.isLoading) {
                       // Display loading indicator while fetching songs
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                      return
+                          // Display loading indicator (Lottie animation) at center
+                          SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Center(
+                              child: Lottie.asset(
+                                "assets/images/music.json", // Replace with your actual Lottie file
+                                width: 100, // Adjust width and height as needed
+                                height: 100,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 100,
+                            )
+                          ],
+                        ),
                       );
                     } else if (provider.hasError) {
                       // Display error message if fetching songs failed
@@ -71,7 +91,7 @@ class _HomeViewState extends State<HomeView> {
                             ),
                             const SizedBox(height: 10),
                             // Assuming you have a widget to display top picks here
-                            TopPicks(),
+                            const TopPicks(),
                             const SizedBox(height: 20),
                             Padding(
                               padding:

@@ -30,8 +30,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Setting(),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: buildFloatingActionButton(dashboardProvider),
+      bottomNavigationBar: buildFloatingActionButton(dashboardProvider),
     );
   }
 

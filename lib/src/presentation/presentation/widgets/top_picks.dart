@@ -4,17 +4,20 @@ import 'package:nymtune/src/core/theme/app_colors.dart';
 import 'package:nymtune/src/core/theme/app_text_styles.dart';
 import 'package:nymtune/src/core/utils/app_routes.dart';
 import 'package:nymtune/src/presentation/presentation/views/details_view.dart';
-import 'package:nymtune/src/presentation/providers/home_provider.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/song_model.dart';
+import '../../providers/favourite_provider.dart';
+import '../../providers/home_provider.dart';
 
 class TopPicks extends StatelessWidget {
+  const TopPicks({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Consumer<SongProvider>(
       builder: (context, provider, _) {
         if (provider.isLoading) {
-          return CircularProgressIndicator(); // Show loading indicator
+          return const CircularProgressIndicator(); // Show loading indicator
         } else if (provider.hasError) {
           return Text(provider.errorMessage); // Show error message
         } else {
@@ -84,20 +87,25 @@ class SongItem extends StatelessWidget {
   }
 }
 
-class SongImage extends StatelessWidget {
+class SongImage extends StatefulWidget {
   final String imageUrl;
-  final int index;
+  final int index; // Update constructor
 
   const SongImage({
     Key? key,
     required this.imageUrl,
-    required this.index, // Update constructor
+    required this.index,
   }) : super(key: key);
 
   @override
+  State<SongImage> createState() => _SongImageState();
+}
+
+class _SongImageState extends State<SongImage> {
+  @override
   Widget build(BuildContext context) {
     return Hero(
-      tag: "song_image_$index", // Use index to create a unique tag
+      tag: "song_image_${widget.index}", // Use index for unique tag
       child: Card(
         elevation: 1,
         color: Colors.grey,
@@ -109,29 +117,12 @@ class SongImage extends StatelessWidget {
         child: SizedBox(
           width: 200,
           height: 150,
-          child: Stack(
-            children: [
-              SizedBox(
-                width: 200,
-                height: 150,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(30),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              Positioned(
-                top: -5,
-                right: -5,
-                child: Lottie.asset(
-                  "assets/images/heart.json",
-                  height: 60,
-                  repeat: false,
-                ),
-              ),
-            ],
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(30),
+            child: Image.network(
+              widget.imageUrl,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ),
@@ -139,7 +130,7 @@ class SongImage extends StatelessWidget {
   }
 }
 
-class SongDetails extends StatelessWidget {
+class SongDetails extends StatefulWidget {
   final Song song;
 
   const SongDetails({
@@ -148,45 +139,90 @@ class SongDetails extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<SongDetails> createState() => _SongDetailsState();
+}
+
+class _SongDetailsState extends State<SongDetails> {
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 15.0, top: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 180,
-            child: Text(
-              song.title,
-              overflow: TextOverflow.ellipsis,
-              style: AppTextStyles.subtitle.copyWith(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          RichText(
-            text: TextSpan(
-              text: 'by ',
-              style: AppTextStyles.description.copyWith(
-                letterSpacing: 1.3,
-                color: Colors.grey.shade600,
-                fontSize: 12,
-              ),
-              children: [
-                TextSpan(
-                  text: song.artist,
-                  style: AppTextStyles.description.copyWith(
-                    letterSpacing: 1.3,
-                    color: Colors.grey.shade500,
-                    fontSize: 12,
+    // Access the FavoriteProvider
+    final favoriteProvider =
+        Provider.of<FavoriteProvider>(context, listen: false);
+
+    // Determine if the current song is liked
+    bool isLiked = favoriteProvider
+        .isFavorite(widget.song.title); // Assuming each song has a unique 'id'
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 120,
+                    child: Text(
+                      widget.song.title,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.title
+                          .copyWith(color: Colors.white, fontSize: 20),
+                    ),
                   ),
-                ),
-              ],
-            ),
+                  RichText(
+                    text: TextSpan(
+                      text: 'by ',
+                      style: AppTextStyles.info
+                          .copyWith(color: Colors.grey.shade600),
+                      children: [
+                        TextSpan(
+                          text: widget.song.artist,
+                          style: AppTextStyles.info
+                              .copyWith(color: Colors.grey.shade400),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Consumer<FavoriteProvider>(
+                builder: (context, provider, _) {
+                  bool isLikedNow = provider.isFavorite(widget.song.title);
+
+                  return GestureDetector(
+                    onTap: () {
+                      // Toggle the liked state using the provider
+                      if (isLikedNow) {
+                        favoriteProvider.removeFavorite(widget.song.title);
+                        isLikedNow = false;
+                      } else {
+                        favoriteProvider.addFavorite(widget.song.title);
+                        isLikedNow = true;
+                      }
+                    },
+                    child: SizedBox(
+                      height: 60,
+                      width: 60,
+                      child: isLikedNow
+                          ? Lottie.asset("assets/images/heart.json",
+                              height: 65, repeat: false, fit: BoxFit.cover)
+                          : const Icon(
+                              Icons.favorite_border,
+                              size: 30,
+                              color: Colors.grey,
+                            ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
