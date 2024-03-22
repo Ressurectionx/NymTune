@@ -1,16 +1,18 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:nymtune/src/core/theme/app_colors.dart';
 import 'package:nymtune/src/core/theme/app_text_styles.dart';
-import 'package:nymtune/src/core/utils/app_routes.dart';
 import 'package:nymtune/src/presentation/presentation/views/details_view.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/song_model.dart';
 import '../../providers/favourite_provider.dart';
-import '../../providers/home_provider.dart';
+import '../../providers/song_provider.dart';
 
 class TopPicks extends StatelessWidget {
-  const TopPicks({super.key});
+  ScrollController horizontalScrollController;
+  TopPicks({required this.horizontalScrollController, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +25,10 @@ class TopPicks extends StatelessWidget {
         } else {
           // Show songs using ListView.builder
           return SizedBox(
-            height: 220,
+            height: 260,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
+              controller: horizontalScrollController,
               itemCount: provider.songs.length,
               itemBuilder: (context, index) {
                 final song = provider.songs[index];
@@ -115,8 +118,8 @@ class _SongImageState extends State<SongImage> {
           borderRadius: BorderRadius.circular(30),
         ),
         child: SizedBox(
-          width: 200,
-          height: 150,
+          width: 245,
+          height: 170,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(30),
             child: Image.network(
@@ -148,81 +151,77 @@ class _SongDetailsState extends State<SongDetails> {
     // Access the FavoriteProvider
     final favoriteProvider =
         Provider.of<FavoriteProvider>(context, listen: false);
-
-    // Determine if the current song is liked
-    bool isLiked = favoriteProvider
-        .isFavorite(widget.song.title); // Assuming each song has a unique 'id'
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Padding(
+      padding: const EdgeInsets.only(left: 10, right: 0),
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 120,
-                    child: Text(
-                      widget.song.title,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.title
-                          .copyWith(color: Colors.white, fontSize: 20),
-                    ),
-                  ),
-                  RichText(
-                    text: TextSpan(
-                      text: 'by ',
-                      style: AppTextStyles.info
-                          .copyWith(color: Colors.grey.shade600),
-                      children: [
-                        TextSpan(
-                          text: widget.song.artist,
-                          style: AppTextStyles.info
-                              .copyWith(color: Colors.grey.shade400),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              const SizedBox(
+                height: 8,
               ),
-              Consumer<FavoriteProvider>(
-                builder: (context, provider, _) {
-                  bool isLikedNow = provider.isFavorite(widget.song.title);
-
-                  return GestureDetector(
-                    onTap: () {
-                      // Toggle the liked state using the provider
-                      if (isLikedNow) {
-                        favoriteProvider.removeFavorite(widget.song.title);
-                        isLikedNow = false;
-                      } else {
-                        favoriteProvider.addFavorite(widget.song.title);
-                        isLikedNow = true;
-                      }
-                    },
-                    child: SizedBox(
-                      height: 60,
-                      width: 60,
-                      child: isLikedNow
-                          ? Lottie.asset("assets/images/heart.json",
-                              height: 65, repeat: false, fit: BoxFit.cover)
-                          : const Icon(
-                              Icons.favorite_border,
-                              size: 30,
-                              color: Colors.grey,
-                            ),
-                    ),
-                  );
-                },
+              SizedBox(
+                width: 170,
+                child: Text(
+                  widget.song.title,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.title
+                      .copyWith(color: Colors.white, fontSize: 15),
+                ),
+              ),
+              SizedBox(
+                width: 170,
+                child: RichText(
+                  maxLines: 2,
+                  text: TextSpan(
+                    text: 'by ',
+                    style: AppTextStyles.info
+                        .copyWith(color: Colors.grey.shade600, fontSize: 12),
+                    children: [
+                      TextSpan(
+                        text: widget.song.artist,
+                        style: AppTextStyles.info.copyWith(
+                            color: Colors.grey.shade400, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
-        ),
-      ],
+          Consumer<FavoriteProvider>(
+            builder: (context, provider, _) {
+              bool isLikedNow = provider.isFavorite(widget.song.title);
+
+              return GestureDetector(
+                onTap: () {
+                  // Toggle the liked state using the provider
+                  if (isLikedNow) {
+                    favoriteProvider.removeFavorite(widget.song.title);
+                    isLikedNow = false;
+                  } else {
+                    favoriteProvider.addFavorite(widget.song.title);
+                    isLikedNow = true;
+                  }
+                },
+                child: SizedBox(
+                  height: 60,
+                  width: 60,
+                  child: isLikedNow
+                      ? Lottie.asset("assets/images/heart.json",
+                          height: 60, repeat: false, fit: BoxFit.cover)
+                      : const Icon(
+                          Icons.favorite_border,
+                          size: 30,
+                          color: Colors.grey,
+                        ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

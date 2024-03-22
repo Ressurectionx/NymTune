@@ -16,7 +16,6 @@ class SongProvider extends ChangeNotifier {
   late String _audioFilePath;
   late bool _hasFetchedAudio;
   late bool _isFetchingAudio;
-  late bool _fetchErrorOccurred;
   late Duration _duration;
   late Duration _position;
 
@@ -37,7 +36,6 @@ class SongProvider extends ChangeNotifier {
     _audioFilePath = '';
     _hasFetchedAudio = false;
     _isFetchingAudio = false;
-    _fetchErrorOccurred = false;
     _duration = const Duration(seconds: 0);
     _position = const Duration(seconds: 0);
 
@@ -66,18 +64,28 @@ class SongProvider extends ChangeNotifier {
   bool get hasFetchedAudio => _hasFetchedAudio;
   bool get isFetchingAudio => _isFetchingAudio;
 
+  final int _initialFetchLimit = 4; // Initial number of songs to fetch
+  bool _hasMore = true;
+
+  bool get hasMore => _hasMore;
+
   Future<List<Song>> fetchSongs() async {
     try {
-      _songs = await songRemoteUsecase.fetchSongs();
+      _isLoading = true;
+      List<Song> newSongs =
+          await songRemoteUsecase.fetchSongs(limit: _initialFetchLimit);
+      _songs.addAll(newSongs);
       _isLoading = false;
+      _hasMore = newSongs.isNotEmpty;
       notifyListeners();
-      return _songs;
+      print("length${_songs.length}");
+      return _songs; // Return the full list of songs
     } catch (e) {
       _hasError = true;
       _errorMessage = e.toString();
       notifyListeners();
       print('Failed to fetch songs: $e');
-      throw e; // Rethrow the error so it can be caught by the caller if needed
+      throw e;
     }
   }
 
@@ -124,13 +132,11 @@ class SongProvider extends ChangeNotifier {
         _audioFilePath = await fetchAndSaveAudio(song.songUrl, song.title);
         _hasFetchedAudio = true;
         _isFetchingAudio = false;
-        _fetchErrorOccurred = false;
         _audioPlayer.play(UrlSource(_audioFilePath));
         _isPlaying = true;
         notifyListeners();
       } catch (e) {
         _isFetchingAudio = false;
-        _fetchErrorOccurred = true;
       }
     } else {
       if (song == _currentSong && !_isPlaying) {

@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:nymtune/firebase_options.dart';
@@ -11,7 +8,7 @@ import 'package:nymtune/src/presentation/providers/favourite_provider.dart';
 import 'package:nymtune/src/presentation/providers/search_song_provider.dart';
 import 'package:provider/provider.dart';
 
-import 'src/presentation/providers/home_provider.dart';
+import 'src/presentation/providers/song_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
