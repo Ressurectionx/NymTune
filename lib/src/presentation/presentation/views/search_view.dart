@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/input_decoration.dart';
 
 class SearchView extends StatelessWidget {
-  const SearchView({Key? key}) : super(key: key);
+  const SearchView({super.key});
 
   @override
   Widget build(BuildContext context) {

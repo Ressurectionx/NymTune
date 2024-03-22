@@ -11,7 +11,7 @@ import '../../data/models/song_model.dart';
 class DetailsView extends StatefulWidget {
   final int index;
 
-  const DetailsView({Key? key, required this.index}) : super(key: key);
+  const DetailsView({super.key, required this.index});
 
   @override
   _DetailsViewState createState() => _DetailsViewState();

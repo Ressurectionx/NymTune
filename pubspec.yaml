@@ -45,6 +45,8 @@ dependencies:
   path_provider: ^2.1.2
   firebase_app_check: ^0.2.1+18
   shimmer: ^3.0.0
+  shared_preferences: ^2.2.2
+  firebase_auth: ^4.17.9
 dev_dependencies:
   flutter_test:
     sdk: flutter

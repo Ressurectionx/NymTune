@@ -9,14 +9,14 @@ import 'package:provider/provider.dart';
 import 'home_view.dart';
 import 'setting.dart';
 
-class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+class DashboardView extends StatefulWidget {
+  const DashboardView({super.key});
 
   @override
-  _DashboardScreenState createState() => _DashboardScreenState();
+  _DashboardViewState createState() => _DashboardViewState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _DashboardViewState extends State<DashboardView> {
   @override
   Widget build(BuildContext context) {
     final dashboardProvider = Provider.of<DashboardProvider>(context);

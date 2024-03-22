@@ -50,10 +50,10 @@ class SongItem extends StatelessWidget {
   final int index;
 
   const SongItem({
-    Key? key,
+    super.key,
     required this.song,
     required this.index,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -95,10 +95,10 @@ class SongImage extends StatefulWidget {
   final int index; // Update constructor
 
   const SongImage({
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.index,
-  }) : super(key: key);
+  });
 
   @override
   State<SongImage> createState() => _SongImageState();
@@ -137,9 +137,9 @@ class SongDetails extends StatefulWidget {
   final Song song;
 
   const SongDetails({
-    Key? key,
+    super.key,
     required this.song,
-  }) : super(key: key);
+  });
 
   @override
   State<SongDetails> createState() => _SongDetailsState();

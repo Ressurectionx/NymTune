@@ -6,6 +6,7 @@ import 'package:nymtune/src/presentation/data/usecases/fetch_song_usecase.dart';
 import 'package:nymtune/src/presentation/providers/dashboard_provider.dart';
 import 'package:nymtune/src/presentation/providers/favourite_provider.dart';
 import 'package:nymtune/src/presentation/providers/search_song_provider.dart';
+import 'package:nymtune/src/presentation/providers/signup_providers.dart';
 import 'package:provider/provider.dart';
 
 import 'src/presentation/providers/song_provider.dart';
@@ -21,7 +22,7 @@ void main() async {
 }
 
 class NymTune extends StatelessWidget {
-  const NymTune({Key? key}) : super(key: key);
+  const NymTune({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +43,11 @@ class NymTune extends StatelessWidget {
             SongProvider(songRemoteUsecase: SongRemoteUsecase()).fetchSongs(),
           ),
         ),
+        ChangeNotifierProvider(create: (context) => SignUpProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        initialRoute: AppRoutes.dashboardRoute,
+        initialRoute: AppRoutes.signUp,
         routes: AppRoutes.routes,
         theme: ThemeData(
           brightness: Brightness.dark,

@@ -85,7 +85,7 @@ class SongProvider extends ChangeNotifier {
       _errorMessage = e.toString();
       notifyListeners();
       print('Failed to fetch songs: $e');
-      throw e;
+      rethrow;
     }
   }
 
