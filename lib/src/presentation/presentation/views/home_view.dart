@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:nymtune/src/core/theme/app_colors.dart';
+import 'package:nymtune/src/presentation/presentation/responsive.dart';
 import 'package:nymtune/src/presentation/presentation/widgets/trending_now.dart';
 import 'package:nymtune/src/presentation/providers/favourite_provider.dart';
 import 'package:nymtune/src/presentation/providers/song_provider.dart';
@@ -69,103 +70,109 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        controller: _scrollController, // Attach scroll controller
+    return ResponsiveWidget(
+      maxWidth: 1900,
+      child: Scaffold(
+        body: CustomScrollView(
+          controller: _scrollController, // Attach scroll controller
 
-        slivers: <Widget>[
-          const SliverAppBar(
-            backgroundColor: Colors.black,
-            title: HWHeader(), // Replace with your app title
-            floating: true,
-            snap: false,
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                // Your widget content here
-                Consumer<SongProvider>(
-                  builder: (context, provider, child) {
-                    if (provider.isLoading) {
-                      // Display loading indicator while fetching songs
-                      return
-                          // Display loading indicator (Lottie animation) at center
-                          SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Center(
-                              child: Lottie.asset(
-                                "assets/json_lottie/music.json", // Replace with your actual Lottie file
-                                width: 100, // Adjust width and height as needed
+          slivers: <Widget>[
+            const SliverAppBar(
+              backgroundColor: Colors.black,
+              title: HWHeader(), // Replace with your app title
+              floating: true,
+              snap: false,
+            ),
+            SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  // Your widget content here
+                  Consumer<SongProvider>(
+                    builder: (context, provider, child) {
+                      if (provider.isLoading) {
+                        // Display loading indicator while fetching songs
+                        return
+                            // Display loading indicator (Lottie animation) at center
+                            SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Center(
+                                child: Lottie.asset(
+                                  "assets/json_lottie/music.json", // Replace with your actual Lottie file
+                                  width:
+                                      100, // Adjust width and height as needed
+                                  height: 100,
+                                ),
+                              ),
+                              const SizedBox(
                                 height: 100,
+                              )
+                            ],
+                          ),
+                        );
+                      } else if (provider.hasError) {
+                        // Display error message if fetching songs failed
+                        return Center(
+                          child: Text('Error: ${provider.errorMessage}'),
+                        );
+                      } else {
+                        // If data is loaded successfully, build the UI
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 12),
+                            const HWSearchBar(),
+                            const SizedBox(height: 12),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 30),
+                              child: Text(
+                                "top picks for you",
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTextStyles.subHeader.copyWith(
+                                    color: AppColors.greenYellow(),
+                                    fontFamily: "OldTurkic",
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 20),
                               ),
                             ),
-                            const SizedBox(
-                              height: 100,
-                            )
+                            const SizedBox(height: 10),
+                            // Assuming you have a widget to display top picks here
+                            TopPicks(
+                              horizontalScrollController:
+                                  _horizontalScrollController,
+                            ),
+                            const SizedBox(height: 20),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 30),
+                              child: Text(
+                                "trending now",
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTextStyles.subHeader.copyWith(
+                                    color: AppColors.greenYellow(),
+                                    fontFamily: "OldTurkic",
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            // Assuming you have a widget to display trending songs here
+                            const TrendingNow(),
                           ],
-                        ),
-                      );
-                    } else if (provider.hasError) {
-                      // Display error message if fetching songs failed
-                      return Center(
-                        child: Text('Error: ${provider.errorMessage}'),
-                      );
-                    } else {
-                      // If data is loaded successfully, build the UI
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 12),
-                          const HWSearchBar(),
-                          const SizedBox(height: 12),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 30),
-                            child: Text(
-                              "top picks for you",
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.subHeader.copyWith(
-                                  color: AppColors.greenYellow(),
-                                  fontFamily: "OldTurkic",
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 20),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          // Assuming you have a widget to display top picks here
-                          TopPicks(
-                            horizontalScrollController:
-                                _horizontalScrollController,
-                          ),
-                          const SizedBox(height: 20),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 30),
-                            child: Text(
-                              "trending now",
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.subHeader.copyWith(
-                                  color: AppColors.greenYellow(),
-                                  fontFamily: "OldTurkic",
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20),
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          // Assuming you have a widget to display trending songs here
-                          const TrendingNow(),
-                        ],
-                      );
-                    }
-                  },
-                ),
-              ],
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

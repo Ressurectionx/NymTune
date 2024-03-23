@@ -17,8 +17,10 @@ class TermsAndCondition extends StatefulWidget {
 class _TermsAndConditionState extends State<TermsAndCondition> {
   @override
   Widget build(BuildContext context) {
+    final isWebviewLayout = MediaQuery.of(context).size.width > 400.0;
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment:
+          isWebviewLayout ? CrossAxisAlignment.center : CrossAxisAlignment.end,
       children: <Widget>[
         Checkbox(
           activeColor: AppColors.greenYellow(),

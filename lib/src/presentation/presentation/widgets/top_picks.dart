@@ -124,6 +124,11 @@ class _SongImageState extends State<SongImage> {
             borderRadius: BorderRadius.circular(30),
             child: Image.network(
               widget.imageUrl,
+              errorBuilder: (context, error, stackTrace) {
+                return const Center(
+                  child: Text('Failed to load image'),
+                );
+              },
               fit: BoxFit.cover,
             ),
           ),

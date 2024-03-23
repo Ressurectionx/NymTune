@@ -25,7 +25,8 @@ class SignUpProvider extends ChangeNotifier {
   bool isSignupPage = true;
   bool isLoading = false;
   bool agreedToTerms = false;
-  String userName = "";
+  String _userName = "";
+
   String? validateFirstName(String? value) {
     if (value?.isEmpty ?? true) {
       return 'Please enter your first name.';
@@ -138,11 +139,11 @@ class SignUpProvider extends ChangeNotifier {
         password: passwordTextController.text.trim(),
       );
       String uid = userCredential.user!.uid;
-      userName = await fetchFirstName(uid);
+      _userName = await fetchFirstName(uid);
 
       final preferences = await SharedPreferences.getInstance();
       await preferences.setString('userId', uid);
-      await preferences.setString('firstName', userName);
+      await preferences.setString('firstName', _userName);
       navigateToDashboard(context);
     } catch (e) {
       _handleError(context, e);
@@ -152,11 +153,16 @@ class SignUpProvider extends ChangeNotifier {
     }
   }
 
-  Future<String?> getUserNameFromSharedPref() async {
+  String _name = "";
+
+  String get userName => _name;
+
+  // Call this method after the provider is created to fetch the username
+  Future<void> getNameFromSharedPref() async {
     final preferences = await SharedPreferences.getInstance();
-    userName = preferences.getString('firstName')!;
-    notifyListeners();
-    return userName;
+    _name =
+        preferences.getString('firstName') ?? ""; // Use a default value if null
+    notifyListeners(); // Notify listeners after updating the username
   }
 
   Future<String> fetchFirstName(String uid) async {

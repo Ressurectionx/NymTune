@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:nymtune/firebase_options.dart';
 import 'package:nymtune/src/core/utils/app_routes.dart';
@@ -10,6 +13,7 @@ import 'package:nymtune/src/presentation/providers/favourite_provider.dart';
 import 'package:nymtune/src/presentation/providers/search_song_provider.dart';
 import 'package:nymtune/src/presentation/providers/signup_providers.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'src/presentation/data/repositories/search_repo.dart';
 import 'src/presentation/providers/song_provider.dart';
@@ -20,15 +24,26 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  // Check for web platform and handle login persistence
+  if (kIsWeb) {
+    final isLoggedIn = await checkWebLoginPersistence();
+    final User? currentUser =
+        isLoggedIn ? FirebaseAuth.instance.currentUser : null;
+    runApp(NymTune(currentUser: currentUser));
+  } else {
+    runApp(const NymTune());
+  }
   runApp(const NymTune());
 }
 
 class NymTune extends StatelessWidget {
-  const NymTune({super.key});
+  final User? currentUser;
+
+  const NymTune({super.key, this.currentUser});
 
   @override
   Widget build(BuildContext context) {
+    //get current user
     final User? currentUser = FirebaseAuth.instance.currentUser;
 
     return MultiProvider(
@@ -45,13 +60,22 @@ class NymTune extends StatelessWidget {
         ),
         ChangeNotifierProvider<SearchProvider>(
           create: (context) {
-            final repository = SearchRepository(); // Assuming a global instance
+            final repository = SearchRepository();
             return SearchProvider(SearchSongsUseCase(repository));
           },
         ),
-        ChangeNotifierProvider(create: (context) => SignUpProvider()),
+        ChangeNotifierProvider<SignUpProvider>(
+          create: (context) {
+            final repository = SignUpProvider();
+            repository.getNameFromSharedPref();
+            return repository;
+          },
+        ),
       ],
       child: MaterialApp(
+        scrollBehavior: const MaterialScrollBehavior().copyWith(
+          dragDevices: {PointerDeviceKind.mouse},
+        ),
         debugShowCheckedModeBanner: false,
         initialRoute:
             currentUser == null ? AppRoutes.signUp : AppRoutes.dashboard,
@@ -59,12 +83,23 @@ class NymTune extends StatelessWidget {
         theme: ThemeData(
           brightness: Brightness.dark,
           primaryColor: Colors.black,
+          colorScheme: const ColorScheme.dark(),
           scaffoldBackgroundColor: Colors.black,
         ),
       ),
     );
   }
 }
+
+// Function to check web login persistence
+Future<bool> checkWebLoginPersistence() async {
+  final prefs = await SharedPreferences.getInstance();
+  final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+  return isLoggedIn;
+}
+
+//code to upload songs into firebase
 
 // class FirebaseFirestoreService {
 //   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

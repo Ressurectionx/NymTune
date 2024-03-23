@@ -64,7 +64,8 @@ class SongProvider extends ChangeNotifier {
   bool get hasFetchedAudio => _hasFetchedAudio;
   bool get isFetchingAudio => _isFetchingAudio;
 
-  final int _initialFetchLimit = 4; // Initial number of songs to fetch
+  final int _initialFetchLimit =
+      kIsWeb ? 8 : 4; // Initial number of songs to fetch
   bool _hasMore = true;
 
   bool get hasMore => _hasMore;
@@ -190,20 +191,40 @@ class SongProvider extends ChangeNotifier {
       _hasFetchedAudio = false;
       notifyListeners();
 
+      String downloadableUrl;
       try {
-        _audioFilePath = await fetchAndSaveAudio(song.songUrl, song.title);
-        print("Audio fetched: $_audioFilePath");
+        // Fetch the downloadable URL from the storage location
+        downloadableUrl = await getDownloadUrl(song.songUrl);
+        print("Downloadable URL fetched: $downloadableUrl");
       } catch (e) {
         _isFetchingAudio = false;
-        print("Error fetching audio: $e");
+        print("Error fetching downloadable URL: $e");
         return; // Exit early if fetching fails
+      }
+
+      if (!kIsWeb) {
+        // For mobile, proceed with fetching and saving the audio file using the downloadable URL
+        try {
+          _audioFilePath = await fetchAndSaveAudio(downloadableUrl, song.title);
+        } catch (e) {
+          _isFetchingAudio = false;
+
+          print("Error fetching audio: $e");
+          return; // Exit early if fetching fails
+        }
+      } else {
+        // For web, use the downloadable URL directly
+        _audioFilePath = downloadableUrl;
       }
     }
 
-    // Play audio if file exists
-    File audioFile = File(_audioFilePath);
-    if (await audioFile.exists()) {
-      print("File exists. Playing audio...");
+    // Play audio
+    if (kIsWeb || await File(_audioFilePath).exists()) {
+      print("Playing audio...");
+      _hasFetchedAudio = true;
+      _isFetchingAudio = false;
+
+      notifyListeners();
       await Future.delayed(
           const Duration(milliseconds: 500)); // Adjust delay as needed
       var decodedPath = Uri.decodeFull(_audioFilePath);

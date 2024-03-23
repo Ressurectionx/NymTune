@@ -48,6 +48,7 @@ dependencies:
   shared_preferences: ^2.2.2
   firebase_auth: ^4.17.9
   dartz: ^0.10.1
+  file_saver: ^0.2.12
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -64,12 +65,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
-
-  # To add assets to your application, add an assets section, like this:
   assets:
     - assets/json_lottie/
     - assets/fonts/

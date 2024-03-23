@@ -25,19 +25,24 @@ class _TrendingNowState extends State<TrendingNow> {
         } else if (provider.hasError) {
           return Text(provider.errorMessage); // Show error message
         } else {
-          return SizedBox(
-            height: (provider.songs.length * 120) + 50,
-            child: ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: provider.songs.length,
-              padding: EdgeInsets.zero,
-              itemBuilder: (context, index) {
-                final song = provider.songs[index];
-                final isLast = index == provider.songs.length - 1;
-
-                return TrendingSongItem(song: song, isLast: isLast);
-              },
+          // Determine the number of columns based on the screen width
+          int crossAxisCount = MediaQuery.of(context).size.width > 1200 ? 2 : 1;
+          return GridView.builder(
+            shrinkWrap: true, // Needed to use GridView inside a Column/ListView
+            physics:
+                const NeverScrollableScrollPhysics(), // to disable GridView's scrolling
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount, // Set based on screen width
+              childAspectRatio: 10 / 2, // Adjust the aspect ratio as needed
+              crossAxisSpacing: 10, // Adjust the spacing as needed
+              mainAxisSpacing: 10, // Adjust the spacing as needed
             ),
+            itemCount: provider.songs.length,
+            itemBuilder: (context, index) {
+              final song = provider.songs[index];
+              return TrendingSongItem(
+                  song: song, isLast: index == provider.songs.length - 1);
+            },
           );
         }
       },

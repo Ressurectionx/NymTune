@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:nymtune/src/core/theme/app_colors.dart';
 import 'package:nymtune/src/core/theme/app_text_styles.dart';
+import 'package:nymtune/src/presentation/presentation/responsive.dart';
 import 'package:nymtune/src/presentation/providers/song_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -49,36 +50,49 @@ class _DetailsViewState extends State<DetailsView> {
           content = buildAudioPlayerWidget(context, isSongReady);
         }
 
-        return Scaffold(
-          extendBody: true,
-          extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            leadingWidth: 80,
-            leading: InkWell(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: CircleAvatar(
-                radius: 16,
-                backgroundColor: AppColors.dark2(),
-                child: Center(
-                  child: Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    color: Colors.grey.shade200,
-                    size: 20,
+        return ResponsiveWidget(
+          maxWidth: 1900,
+          child: Scaffold(
+            extendBody: true,
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              leadingWidth: 80,
+              leading: InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: CircleAvatar(
+                  radius: 16,
+                  backgroundColor: AppColors.dark2(),
+                  child: Center(
+                    child: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: Colors.grey.shade200,
+                      size: 20,
+                    ),
                   ),
                 ),
               ),
             ),
+            body: content,
           ),
-          body: content,
         );
       },
     );
   }
 
   Widget buildAudioPlayerWidget(BuildContext context, bool isSongReady) {
+    final bool isLargeScreen = MediaQuery.of(context).size.width > 600;
+    // Adjust sizes based on the screen size
+    final double imageHeight = isLargeScreen
+        ? MediaQuery.of(context).size.height * 0.70
+        : MediaQuery.of(context).size.width * 1.2;
+    final double controlButtonSize = isLargeScreen ? 80 : 65;
+    final double playPauseButtonSize = isLargeScreen ? 120 : 90;
+    final double iconSize = isLargeScreen ? 40 : 24;
+    final double spacing = isLargeScreen ? 40 : 25;
+
     final SongProvider homeProvider = Provider.of<SongProvider>(context);
     final Song? song = homeProvider.currentSong;
     final Duration? duration = homeProvider.duration;
@@ -100,8 +114,9 @@ class _DetailsViewState extends State<DetailsView> {
               tag: "song_image_details",
               child: Image.network(
                 song.imageUrl,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.width * 1.2,
+                width: double.infinity, // Adjust for web
+                height: imageHeight, // Adjust for web
+
                 fit: BoxFit.fill,
               ),
             ),
