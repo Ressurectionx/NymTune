@@ -193,7 +193,6 @@ class _SongDetailsState extends State<SongDetails> {
           Consumer<FavoriteProvider>(
             builder: (context, provider, _) {
               bool isLikedNow = provider.isFavorite(widget.song.title);
-
               return GestureDetector(
                 onTap: () {
                   // Toggle the liked state using the provider

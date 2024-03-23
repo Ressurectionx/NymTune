@@ -33,7 +33,8 @@ class _DetailsViewState extends State<DetailsView> {
   Widget build(BuildContext context) {
     return Consumer<SongProvider>(
       builder: (context, provider, _) {
-        final bool hasFetchedAudio = provider.hasFetchedAudio;
+        final bool isSongReady =
+            !_homeProvider.isFetchingAudio && _homeProvider.hasFetchedAudio;
 
         Widget content;
         if (provider.isLoading) {
@@ -45,13 +46,7 @@ class _DetailsViewState extends State<DetailsView> {
             child: Text(provider.errorMessage),
           );
         } else {
-          if (hasFetchedAudio) {
-            content = buildAudioPlayerWidget(context);
-          } else {
-            content = const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+          content = buildAudioPlayerWidget(context, isSongReady);
         }
 
         return Scaffold(
@@ -83,7 +78,7 @@ class _DetailsViewState extends State<DetailsView> {
     );
   }
 
-  Widget buildAudioPlayerWidget(BuildContext context) {
+  Widget buildAudioPlayerWidget(BuildContext context, bool isSongReady) {
     final SongProvider homeProvider = Provider.of<SongProvider>(context);
     final Song? song = homeProvider.currentSong;
     final Duration? duration = homeProvider.duration;
@@ -254,13 +249,15 @@ class _DetailsViewState extends State<DetailsView> {
                   ],
                 ),
                 child: Center(
-                  child: Icon(
-                    isPlaying
-                        ? CupertinoIcons.pause_fill
-                        : CupertinoIcons.play_fill,
-                    size: 30,
-                    color: AppColors.dark2(),
-                  ),
+                  child: isSongReady
+                      ? Icon(
+                          isPlaying
+                              ? CupertinoIcons.pause_fill
+                              : CupertinoIcons.play_fill,
+                          size: 30,
+                          color: AppColors.dark2(),
+                        )
+                      : CircularProgressIndicator(),
                 ),
               ),
             ),
