@@ -32,11 +32,7 @@ NymTune is currently built for mobile and web platforms using Flutter. Run it on
 
 Android: Ensure you have the Flutter development environment set up for Android.
 Web Browser & iOS: Set up the Flutter development environment for iOS/Web Browser if you plan to target those platforms.
-Packages:
-
-The app utilizes the following Flutter packages (replace versions with the latest stable versions if needed):
-
-## Packages Used in NymTune
+Packages Used in NymTune
 
 The table below details the packages utilized in the NymTune music player app, along with their descriptions:
 
@@ -46,14 +42,14 @@ The table below details the packages utilized in the NymTune music player app, a
 | cloud_firestore                       | Provides interaction with Firebase Firestore, allowing retrieval of song data.                                                 |
 | cupertino_icons                       | Offers Cupertino-style icons for a consistent and visually appealing user interface.                                           |
 | dartz                                 | Integrates functional programming concepts for potential code optimization.                                                    |
-| firebase_app_check (optional)         | Enhances app security by providing additional verification measures (consider including if implemented).                       |
+| firebase_app_check                    | Enhances app security by providing additional verification measures (consider including if implemented).                       |
 | firebase_auth                         | Implements user authentication using Firebase, enabling features like login and signup.                                        |
 | firebase_core                         | Core Firebase functionality, establishing the foundation for integration with other Firebase services.                         |
 | firebase_storage                      | Grants access to Firebase Storage, facilitating storage and retrieval of song files.                                           |
-| glassmorphism (optional)              | Enables the implementation of a glassmorphism UI effect (consider including if implemented).                                   |
+| glassmorphism                         | Enables the implementation of a glassmorphism UI effect (consider including if implemented).                                   |
 | http (consider alternatives like dio) | Used for making HTTP requests if needed (explore alternatives like `dio` for potentially better performance).                  |
-| lottie (optional)                     | Allows for displaying Lottie animations, potentially enhancing the user interface (consider including if implemented).         |
+| lottie                                | Allows for displaying Lottie animations, potentially enhancing the user interface (consider including if implemented).         |
 | path_provider                         | Provides access to application storage directories, potentially enabling functionalities like saving downloaded songs locally. |
 | provider                              | Handles state management within the app, ensuring consistent data flow throughout the UI.                                      |
-| shared_preferences (optional)         | Offers persistence of app data, potentially useful for storing user preferences (consider including if implemented).           |
+| shared_preferences                    | Offers persistence of app data, potentially useful for storing user preferences (consider including if implemented).           |
 | shimmer                               | Creates loading placeholders for a smoother user experience, minimizing wait times while data is being fetched.                |
