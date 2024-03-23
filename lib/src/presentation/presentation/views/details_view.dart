@@ -5,7 +5,6 @@ import 'package:nymtune/src/core/theme/app_colors.dart';
 import 'package:nymtune/src/core/theme/app_text_styles.dart';
 import 'package:nymtune/src/presentation/presentation/responsive.dart';
 import 'package:nymtune/src/presentation/presentation/views/dashboard.dart';
-import 'package:nymtune/src/presentation/providers/dashboard_provider.dart';
 import 'package:nymtune/src/presentation/providers/song_provider.dart';
 import 'package:provider/provider.dart';
 
