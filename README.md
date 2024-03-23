@@ -14,7 +14,8 @@ to fetch song details as soon as the user clicks play, eliminating wait times.
 Enjoy uninterrupted music playback with on-demand song fetching using Firestore streams.
 No more waiting for the entire song list to load!
 
-###Clean Architecture:
+### Clean Architecture:
+
 The app adheres to a clean architecture pattern for better maintainability and modularity.
 Code is organized into clear layers: domain, data, and presentation.
 
@@ -44,19 +45,29 @@ Folder Structure:
 
 The app adheres to a clean architecture, with code organized in the following directories (may vary slightly depending on your implementation):
 
-#### domain: Houses domain models representing song data (independent of any specific database).
+#### domain:
 
-#### data: Contains logic for fetching song details from Firestore and retrieving song files from Storage.
+Houses domain models representing song data (independent of any specific database).
 
-#### presentation: Implements the user interface and interacts with the data layer.
+#### data:
+
+Contains logic for fetching song details from Firestore and retrieving song files from Storage.
+
+#### presentation:
+
+Implements the user interface and interacts with the data layer.
 
 Supported Platforms:
 
 NymTune is currently built for mobile and web platforms using Flutter. Run it on:
 
-#### Android: Ensure you have the Flutter development environment set up for Android.
+#### Android:
 
-#### Web Browser & iOS: Set up the Flutter development environment for iOS/Web Browser if you plan to target those platforms.
+Ensure you have the Flutter development environment set up for Android.
+
+#### Web Browser & iOS:
+
+Set up the Flutter development environment for iOS/Web Browser if you plan to target those platforms.
 
 Packages Used in NymTune
 
