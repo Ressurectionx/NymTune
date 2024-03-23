@@ -33,22 +33,25 @@ class SearchView extends StatelessWidget {
                             itemCount: searchProvider.searchResults.length,
                             itemBuilder: (context, index) {
                               final song = searchProvider.searchResults[index];
-                              return ListTile(
-                                leading: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.network(
-                                    song.imageUrl,
-                                    width: 50,
-                                    height: 50,
-                                    fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            const Icon(Icons.error),
+                              return InkWell(
+                                onTap: () {},
+                                child: ListTile(
+                                  leading: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.network(
+                                      song.imageUrl,
+                                      width: 50,
+                                      height: 50,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              const Icon(Icons.error),
+                                    ),
                                   ),
+                                  title: Text(song.title),
+                                  subtitle: Text(song.artist),
+                                  trailing: Text(song.duration),
                                 ),
-                                title: Text(song.title),
-                                subtitle: Text(song.artist),
-                                trailing: Text(song.duration),
                               );
                             },
                           ),

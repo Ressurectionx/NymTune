@@ -59,13 +59,27 @@ class SongItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(
+        Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-            builder: (context) => DetailsView(
-              index: index,
-            ),
+          PageRouteBuilder(
+            transitionDuration:
+                const Duration(milliseconds: 500), // Adjust duration as needed
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                DetailsView(index: index),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1.0, 0.0),
+                  end: Offset.zero,
+                )
+                    .chain(CurveTween(curve: Curves.easeInOutQuad))
+                    .animate(animation),
+                child: child,
+              );
+            },
           ),
+          (route) => false, // Clear navigation history
         );
       },
       child: Container(
