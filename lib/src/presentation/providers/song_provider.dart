@@ -89,6 +89,8 @@ class SongProvider extends ChangeNotifier {
     }
   }
 
+  //future use - show downloading percentage  of song
+
   // Future<String> fetchAndSaveAudio(String songUrl, String songId) async {
   //   String filePath = '${(await getTemporaryDirectory()).path}/$songId.mp3';
   //   File file = File(filePath);
@@ -127,6 +129,7 @@ class SongProvider extends ChangeNotifier {
   //     throw Exception('Error fetching and saving audio stream: $e');
   //   }
   // }
+
   String sanitizeFileName(String fileName) {
     return fileName.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
   }
@@ -172,37 +175,12 @@ class SongProvider extends ChangeNotifier {
     }
   }
 
-  // void playAudio(Song song) async {
-  //   // Check if the new song is different from the current song
-  //   if (_currentSong?.title != song.title) {
-  //     _isFetchingAudio = true;
-  //     _currentSong = song;
-  //     _hasFetchedAudio =
-  //         false; // Reset this flag since we're fetching a new song
-  //     notifyListeners();
-  //     try {
-  //       _audioFilePath = await fetchAndSaveAudio(song.songUrl, song.title);
-  //       _audioPlayer.play(UrlSource(_audioFilePath));
-  //       _isPlaying = true;
-  //       _isFetchingAudio = false;
-  //       _hasFetchedAudio = true;
-  //       notifyListeners();
-  //     } catch (e) {
-  //       _isFetchingAudio = false;
-  //       print("Error fetching and playing audio: $e");
-  //     }
-  //   } else if (!_isPlaying) {
-  //     // If it's the same song and not currently playing, just play it
-  //     _audioPlayer.play(UrlSource(_audioFilePath));
-  //     _isPlaying = true;
-  //     notifyListeners();
-  //   } else {
-  //     // If it's the same song and is playing, this call might be redundant
-  //     print("Attempting to play the same song that is already playing.");
-  //   }
-  // }
   void playAudio(Song song) async {
-    print("playAudio called for song: ${song.title}");
+    // If a different song is requested, stop the current one
+    if (_currentSong != null && _currentSong?.title != song.title) {
+      await _audioPlayer.stop();
+      _isPlaying = false;
+    }
 
     // Handle new song or song change
     if (_currentSong?.title != song.title || !_hasFetchedAudio) {

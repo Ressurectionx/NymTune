@@ -123,7 +123,7 @@ class TrendingSongItem extends StatelessWidget {
                   height: 60,
                   width: 60,
                   child: isLikedNow
-                      ? Lottie.asset("assets/images/heart.json",
+                      ? Lottie.asset("assets/json_lottie/heart.json",
                           height: 65, repeat: false, fit: BoxFit.cover)
                       : const Icon(
                           Icons.favorite_border,

@@ -99,7 +99,7 @@ class _HomeViewState extends State<HomeView> {
                           children: [
                             Center(
                               child: Lottie.asset(
-                                "assets/images/music.json", // Replace with your actual Lottie file
+                                "assets/json_lottie/music.json", // Replace with your actual Lottie file
                                 width: 100, // Adjust width and height as needed
                                 height: 100,
                               ),

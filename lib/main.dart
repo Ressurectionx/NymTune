@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:nymtune/firebase_options.dart';
 import 'package:nymtune/src/core/utils/app_routes.dart';
 import 'package:nymtune/src/presentation/data/usecases/fetch_song_usecase.dart';
+import 'package:nymtune/src/presentation/data/usecases/search_usecase.dart';
 import 'package:nymtune/src/presentation/providers/dashboard_provider.dart';
 import 'package:nymtune/src/presentation/providers/favourite_provider.dart';
 import 'package:nymtune/src/presentation/providers/search_song_provider.dart';
 import 'package:nymtune/src/presentation/providers/signup_providers.dart';
 import 'package:provider/provider.dart';
 
+import 'src/presentation/data/repositories/search_repo.dart';
 import 'src/presentation/providers/song_provider.dart';
 
 void main() async {
@@ -42,9 +44,10 @@ class NymTune extends StatelessWidget {
           create: (context) => FavoriteProvider(),
         ),
         ChangeNotifierProvider<SearchProvider>(
-          create: (context) => SearchProvider(
-            SongProvider(songRemoteUsecase: SongRemoteUsecase()).fetchSongs(),
-          ),
+          create: (context) {
+            final repository = SearchRepository(); // Assuming a global instance
+            return SearchProvider(SearchSongsUseCase(repository));
+          },
         ),
         ChangeNotifierProvider(create: (context) => SignUpProvider()),
       ],

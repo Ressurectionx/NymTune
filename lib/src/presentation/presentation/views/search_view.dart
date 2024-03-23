@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:nymtune/src/presentation/providers/search_song_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/input_decoration.dart';
@@ -21,12 +22,13 @@ class SearchView extends StatelessWidget {
                   TextField(
                     controller: searchProvider.searchController,
                     decoration: inputDecoration(),
+                    onChanged: (searchTerm) =>
+                        searchProvider.searchSongs(searchTerm),
                   ),
                   const SizedBox(height: 20),
                   Expanded(
                     child: searchProvider.searchResults.isEmpty
-                        ? const Center(
-                            child: Text('No results found for your search.'))
+                        ? Lottie.asset("assets/json_lottie/searching.json")
                         : ListView.builder(
                             itemCount: searchProvider.searchResults.length,
                             itemBuilder: (context, index) {

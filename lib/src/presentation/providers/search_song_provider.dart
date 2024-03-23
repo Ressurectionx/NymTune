@@ -2,39 +2,39 @@ import 'package:flutter/material.dart';
 
 import '../data/models/song_model.dart';
 
+import '../data/usecases/search_usecase.dart';
+
 class SearchProvider extends ChangeNotifier {
-  final Future<List<Song>> songListFuture;
-  final TextEditingController searchController = TextEditingController();
-  final List<Song> _allSongs = [];
-  List<Song> _searchResults = [];
+  final SearchSongsUseCase searchSongsUseCase;
+  final List<Song> _searchResults = [];
+  final TextEditingController searchController =
+      TextEditingController(); // Add controller for text field
 
-  SearchProvider(this.songListFuture) {
-    songListFuture.then((songs) {
-      _allSongs.addAll(songs);
-      _searchResults = _allSongs;
-      notifyListeners();
-    });
-
-    searchController.addListener(_onSearchTextChanged);
+  SearchProvider(this.searchSongsUseCase) {
+    _callSearchSongs(""); // Initial empty search
   }
 
-  void _onSearchTextChanged() {
-    final searchTerm = searchController.text.toLowerCase();
+  searchSongs(String searchTerm) async {
     if (searchTerm.isEmpty) {
-      _searchResults = _allSongs;
+      _searchResults.clear();
+      notifyListeners();
     } else {
-      _searchResults = _allSongs
-          .where((song) => song.title.toLowerCase().contains(searchTerm))
-          .toList();
+      final result = await searchSongsUseCase.searchSongs(searchTerm);
+      result.fold(
+        (failure) => print('Error searching songs: ${failure.message}'),
+        (songs) {
+          _searchResults.clear();
+          _searchResults.addAll(songs);
+        },
+      );
+      notifyListeners();
     }
-    notifyListeners();
+  }
+
+  // Updated for initial empty search
+  void _callSearchSongs(String searchTerm) async {
+    await searchSongs(searchTerm); // Perform initial search
   }
 
   List<Song> get searchResults => _searchResults;
-
-  @override
-  void dispose() {
-    searchController.dispose();
-    super.dispose();
-  }
 }
