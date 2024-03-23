@@ -4,6 +4,8 @@ import 'package:glassmorphism/glassmorphism.dart';
 import 'package:nymtune/src/core/theme/app_colors.dart';
 import 'package:nymtune/src/core/theme/app_text_styles.dart';
 import 'package:nymtune/src/presentation/presentation/responsive.dart';
+import 'package:nymtune/src/presentation/presentation/views/dashboard.dart';
+import 'package:nymtune/src/presentation/providers/dashboard_provider.dart';
 import 'package:nymtune/src/presentation/providers/song_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -60,7 +62,28 @@ class _DetailsViewState extends State<DetailsView> {
               leadingWidth: 80,
               leading: InkWell(
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    PageRouteBuilder(
+                      transitionDuration: const Duration(
+                          milliseconds: 500), // Adjust duration as needed
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          const DashboardView(),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                        return SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(1.0, 0.0),
+                            end: Offset.zero,
+                          )
+                              .chain(CurveTween(curve: Curves.linear))
+                              .animate(animation),
+                          child: child,
+                        );
+                      },
+                    ),
+                    (route) => false, // Clear navigation history
+                  );
                 },
                 child: CircleAvatar(
                   radius: 16,
@@ -87,13 +110,10 @@ class _DetailsViewState extends State<DetailsView> {
     // Adjust sizes based on the screen size
     final double imageHeight = isLargeScreen
         ? MediaQuery.of(context).size.height * 0.70
-        : MediaQuery.of(context).size.width * 1.2;
-    final double controlButtonSize = isLargeScreen ? 80 : 65;
-    final double playPauseButtonSize = isLargeScreen ? 120 : 90;
-    final double iconSize = isLargeScreen ? 40 : 24;
-    final double spacing = isLargeScreen ? 40 : 25;
+        : MediaQuery.of(context).size.width * 1.5;
 
     final SongProvider homeProvider = Provider.of<SongProvider>(context);
+
     final Song? song = homeProvider.currentSong;
     final Duration? duration = homeProvider.duration;
     final Duration? position = homeProvider.position;
@@ -206,33 +226,64 @@ class _DetailsViewState extends State<DetailsView> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            GlassmorphicContainer(
-              width: 65,
-              height: 65,
-              borderRadius: 40,
-              linearGradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.white.withOpacity(0.2),
-                  Colors.white.withOpacity(0.1),
-                ],
-              ),
-              border: 2,
-              blur: 10,
-              borderGradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.greenYellow().withOpacity(0.5),
-                  AppColors.greenYellow().withOpacity(0.2),
-                ],
-              ),
-              child: Center(
-                child: Icon(
-                  CupertinoIcons.backward_end_fill,
-                  size: 24,
-                  color: AppColors.greenYellow(),
+            InkWell(
+              onTap: () {
+                if (widget.index != 0) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    PageRouteBuilder(
+                      transitionDuration: const Duration(
+                          milliseconds: 500), // Adjust duration as needed
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          DetailsView(index: widget.index - 1),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                        // Customize your transition here (optional)
+                        return SlideTransition(
+                          position: Tween<Offset>(
+                                  begin: const Offset(1.0, 0.0),
+                                  end: Offset.zero)
+                              .animate(animation),
+                          child: child,
+                        );
+                      },
+                    ),
+                    (route) => false, // Clear navigation history
+                  );
+                }
+              },
+              child: GlassmorphicContainer(
+                width: 65,
+                height: 65,
+                borderRadius: 40,
+                linearGradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.dark2(),
+                    AppColors.dark3(),
+                  ],
+                ),
+                border: 2,
+                blur: 10,
+                borderGradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: widget.index == 0
+                      ? [Colors.transparent, Colors.transparent]
+                      : [
+                          AppColors.greenYellow().withOpacity(0.5),
+                          AppColors.greenYellow().withOpacity(0.2),
+                        ],
+                ),
+                child: Center(
+                  child: Icon(
+                    CupertinoIcons.backward_end_fill,
+                    size: 24,
+                    color: widget.index == 0
+                        ? AppColors.greenYellow().withOpacity(0.3)
+                        : AppColors.greenYellow(),
+                  ),
                 ),
               ),
             ),
@@ -272,38 +323,63 @@ class _DetailsViewState extends State<DetailsView> {
                           size: 30,
                           color: AppColors.dark2(),
                         )
-                      : CircularProgressIndicator(),
+                      : const CircularProgressIndicator(),
                 ),
               ),
             ),
             const SizedBox(width: 25),
-            GlassmorphicContainer(
-              width: 65,
-              height: 65,
-              borderRadius: 40,
-              linearGradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Colors.white.withOpacity(0.2),
-                  Colors.white.withOpacity(0.1),
-                ],
-              ),
-              border: 2,
-              blur: 10,
-              borderGradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.greenYellow().withOpacity(0.5),
-                  AppColors.greenYellow().withOpacity(0.2),
-                ],
-              ),
-              child: Center(
-                child: Icon(
-                  CupertinoIcons.forward_end_fill,
-                  size: 24,
-                  color: AppColors.greenYellow(),
+            InkWell(
+              onTap: () {
+                if (homeProvider.songs.length < widget.index) ;
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  PageRouteBuilder(
+                    transitionDuration: const Duration(
+                        milliseconds: 500), // Adjust duration as needed
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        DetailsView(index: widget.index + 1),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      // Customize your transition here (optional)
+                      return SlideTransition(
+                        position: Tween<Offset>(
+                                begin: const Offset(1.0, 0.0), end: Offset.zero)
+                            .animate(animation),
+                        child: child,
+                      );
+                    },
+                  ),
+                  (route) => false, // Clear navigation history
+                );
+              },
+              child: GlassmorphicContainer(
+                width: 65,
+                height: 65,
+                borderRadius: 40,
+                linearGradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.dark2(),
+                    AppColors.dark3(),
+                  ],
+                ),
+                border: 2,
+                blur: 10,
+                borderGradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.greenYellow().withOpacity(0.5),
+                    AppColors.greenYellow().withOpacity(0.2),
+                  ],
+                ),
+                child: Center(
+                  child: Icon(
+                    CupertinoIcons.forward_end_fill,
+                    size: 24,
+                    color: AppColors.greenYellow(),
+                  ),
                 ),
               ),
             ),

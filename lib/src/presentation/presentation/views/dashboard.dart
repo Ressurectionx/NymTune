@@ -90,7 +90,11 @@ class _DashboardViewState extends State<DashboardView> {
                     ? 60
                     : (dashboardProvider.currentIndex == 1 ? 50 : 45),
                 repeat: true)
-            : Icon(icon, size: 22),
+            : Icon(
+                icon,
+                size: 22,
+                color: Colors.white,
+              ),
       ),
     );
   }

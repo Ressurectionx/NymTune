@@ -33,7 +33,7 @@ class _TrendingNowState extends State<TrendingNow> {
                 const NeverScrollableScrollPhysics(), // to disable GridView's scrolling
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: crossAxisCount, // Set based on screen width
-              childAspectRatio: 10 / 2, // Adjust the aspect ratio as needed
+              childAspectRatio: 10 / 3, // Adjust the aspect ratio as needed
               crossAxisSpacing: 10, // Adjust the spacing as needed
               mainAxisSpacing: 10, // Adjust the spacing as needed
             ),

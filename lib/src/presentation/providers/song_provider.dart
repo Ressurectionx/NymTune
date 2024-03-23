@@ -202,24 +202,27 @@ class SongProvider extends ChangeNotifier {
         return; // Exit early if fetching fails
       }
 
-      if (!kIsWeb) {
-        // For mobile, proceed with fetching and saving the audio file using the downloadable URL
+      _audioFilePath = downloadableUrl;
+
+      // Handle mobile and web platforms differently
+      if (kIsWeb) {
+        // Web platform: Use downloadable URL directly
+        print("Playing audio on Web...");
+      } else {
+        // Mobile platform: Fetch and save audio file
         try {
           _audioFilePath = await fetchAndSaveAudio(downloadableUrl, song.title);
+          print("Audio fetched on Mobile: $_audioFilePath");
         } catch (e) {
           _isFetchingAudio = false;
-
-          print("Error fetching audio: $e");
+          print("Error fetching audio on Mobile: $e");
           return; // Exit early if fetching fails
         }
-      } else {
-        // For web, use the downloadable URL directly
-        _audioFilePath = downloadableUrl;
       }
     }
 
     // Play audio
-    if (kIsWeb || await File(_audioFilePath).exists()) {
+    if (_audioFilePath != null) {
       print("Playing audio...");
       _hasFetchedAudio = true;
       _isFetchingAudio = false;
@@ -231,7 +234,7 @@ class SongProvider extends ChangeNotifier {
       _audioPlayer.play(UrlSource(decodedPath));
       _isPlaying = true;
     } else {
-      print("File does not exist: $_audioFilePath");
+      print("Error: No audio path available");
     }
 
     _isFetchingAudio = false;

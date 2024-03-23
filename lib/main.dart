@@ -74,7 +74,9 @@ class NymTune extends StatelessWidget {
       ],
       child: MaterialApp(
         scrollBehavior: const MaterialScrollBehavior().copyWith(
-          dragDevices: {PointerDeviceKind.mouse},
+          dragDevices: {
+            kIsWeb ? PointerDeviceKind.mouse : PointerDeviceKind.touch
+          },
         ),
         debugShowCheckedModeBanner: false,
         initialRoute:

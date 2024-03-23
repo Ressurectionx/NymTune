@@ -140,13 +140,13 @@ class _HomeViewState extends State<HomeView> {
                                     fontSize: 20),
                               ),
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 16),
                             // Assuming you have a widget to display top picks here
                             TopPicks(
                               horizontalScrollController:
                                   _horizontalScrollController,
                             ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 24),
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 30),
