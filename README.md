@@ -31,11 +31,15 @@ Song files stored in Cloud Storage
 State management is effectively handled using the Provider package,
 ensuring a consistent data flow throughout the app.
 
-### Intuitive UI: The app boasts a user-friendly interface with clear navigation,
+### Intuitive UI:
+
+The app boasts a user-friendly interface with clear navigation,
 
 making it easy to find and play songs.
 
-### Additional Features: The provided dependency list hints at functionalities like:
+### Additional Features:
+
+The provided dependency list hints at functionalities like:
 
 Signup/Signin pages
 Home screen
