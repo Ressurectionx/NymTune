@@ -1,15 +1,16 @@
 # NymTune: A Streamlined Music Player App
 
-##Description:
+## Description:
 
 NymTune is a user-friendly music player app built with Flutter that seamlessly integrates
 with Firebase for data storage and authentication.
 It offers a smooth user experience by leveraging streams
 to fetch song details as soon as the user clicks play, eliminating wait times.
 
-##Features:
+## Features:
 
-###Streamlined Song Retrieval:
+### Streamlined Song Retrieval:
+
 Enjoy uninterrupted music playback with on-demand song fetching using Firestore streams.
 No more waiting for the entire song list to load!
 
@@ -17,20 +18,24 @@ No more waiting for the entire song list to load!
 The app adheres to a clean architecture pattern for better maintainability and modularity.
 Code is organized into clear layers: domain, data, and presentation.
 
-###Firebase Integration:
+### Firebase Integration:
+
 NymTune leverages the power of Firebase for:
 User authentication
 Song data storage in Firestore
 Song files stored in Cloud Storage
 
-###Provider-based State Management:
+### Provider-based State Management:
+
 State management is effectively handled using the Provider package,
 ensuring a consistent data flow throughout the app.
 
-###Intuitive UI: The app boasts a user-friendly interface with clear navigation,
+### Intuitive UI: The app boasts a user-friendly interface with clear navigation,
+
 making it easy to find and play songs.
 
-###Additional Features: The provided dependency list hints at functionalities like:
+### Additional Features: The provided dependency list hints at functionalities like:
+
 Signup/Signin pages
 Home screen
 Song details screen
@@ -39,15 +44,20 @@ Folder Structure:
 
 The app adheres to a clean architecture, with code organized in the following directories (may vary slightly depending on your implementation):
 
-####domain: Houses domain models representing song data (independent of any specific database).
-####data: Contains logic for fetching song details from Firestore and retrieving song files from Storage.
-####presentation: Implements the user interface and interacts with the data layer.
+#### domain: Houses domain models representing song data (independent of any specific database).
+
+#### data: Contains logic for fetching song details from Firestore and retrieving song files from Storage.
+
+#### presentation: Implements the user interface and interacts with the data layer.
+
 Supported Platforms:
 
 NymTune is currently built for mobile and web platforms using Flutter. Run it on:
 
-####Android: Ensure you have the Flutter development environment set up for Android.
-####Web Browser & iOS: Set up the Flutter development environment for iOS/Web Browser if you plan to target those platforms.
+#### Android: Ensure you have the Flutter development environment set up for Android.
+
+#### Web Browser & iOS: Set up the Flutter development environment for iOS/Web Browser if you plan to target those platforms.
+
 Packages Used in NymTune
 
 The table below details the packages utilized in the NymTune music player app, along with their descriptions:
