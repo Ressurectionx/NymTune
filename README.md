@@ -95,4 +95,4 @@ The table below details the packages utilized in the NymTune music player app, a
 | shared_preferences                    | Offers persistence of app data, potentially useful for storing user preferences (consider including if implemented).           |
 | shimmer                               | Creates loading placeholders for a smoother user experience, minimizing wait times while data is being fetched.                |
 
-![Screenshot of NymTune Home Screen](../assets/nymtune_poster2.png)
+![Screenshot of NymTune Home Screen](https://github.com/Ressurectionx/NymTune/blob/main/assets/nymtune_poster2.png?raw=true)
